@@ -3,12 +3,9 @@ import CollectionPreview from "../../components/collection-preview/collection-pr
 import SHOP_DATA from "./shop.data";
 
 class ShopPage extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      collection: SHOP_DATA,
-    };
-  }
+  state = {
+    collection: SHOP_DATA,
+  };
 
   render() {
     const { collection } = this.state;
