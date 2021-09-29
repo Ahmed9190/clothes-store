@@ -6,18 +6,18 @@ import CustomButton from "./../custom-button/custom-button";
 import { signInWithGoogle } from "./../../firebase/firebase.utils";
 
 const SignIn = () => {
-  const [signinData, setSigninData] = useState({});
+  const [signInData, setSignInData] = useState({ email: "", password: "" });
 
   const handleChange = ({ target: { name, value } }) => {
-    setSigninData({ ...signinData, [name]: value });
+    setSignInData({ ...signInData, [name]: value });
   };
 
-  const handleSubmit = ({ preventDefault }) => {
-    preventDefault();
+  const handleSubmit = (e) => {
+    e.preventDefault();
     resetSigninData();
   };
 
-  const resetSigninData = () => setSigninData({});
+  const resetSigninData = () => setSignInData({});
 
   return (
     <div className="sign-in">
@@ -29,7 +29,7 @@ const SignIn = () => {
           type="email"
           name="email"
           label="email"
-          value={signinData?.email}
+          value={signInData?.email}
           required
           handleChange={handleChange}
         />
@@ -37,7 +37,7 @@ const SignIn = () => {
           type="password"
           name="password"
           label="password"
-          value={signinData?.password}
+          value={signInData?.password}
           required
           handleChange={handleChange}
         />
