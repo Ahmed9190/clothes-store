@@ -30,9 +30,9 @@ function App({ currentUser, setCurrentUser }) {
             ...snapShot.data(),
           });
         });
-      } else {
-        setCurrentUser(userAuth);
       }
+      //TODO:  two times set current user
+      setCurrentUser(userAuth);
     });
 
     return () => unsubscribeFromAuth();

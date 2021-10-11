@@ -1,5 +1,11 @@
 import * as firebase from "firebase/app";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  setDoc,
+  writeBatch,
+} from "firebase/firestore";
 import { getFirestore } from "firebase/firestore";
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 
@@ -44,29 +50,43 @@ export const createUserProfileDocumentIfNotExistsAndGetUserRef = async (
 
 firebase.initializeApp(firebaseConfig);
 
+export const addCollectionAndDocuments = async (
+  collectionKey,
+  objectsToAdd
+) => {
+  const collectionRef = collection(getFirestore(), collectionKey);
+
+  const batch = writeBatch(getFirestore());
+
+  objectsToAdd.forEach((object) => {
+    const newDocRef = doc(collectionRef);
+    batch.set(newDocRef, object);
+  });
+
+  return await batch.commit();
+};
+
+export const convertCollectionsSnapshotToMap = (collectionsSnapshot) => {
+  const transformedCollection = collectionsSnapshot.docs.map((doc) => {
+    const { title, items } = doc.data();
+
+    return {
+      routeName: encodeURI(title.toLowerCase()),
+      id: doc.id,
+      title,
+      items,
+    };
+  });
+  return transformedCollection.reduce((accumulator, collection) => {
+    accumulator[collection.title.toLowerCase()] = collection;
+    return accumulator;
+  }, {});
+};
+
 export const auth = getAuth();
 // export const firestore = firebase.firestore();
 const provider = new GoogleAuthProvider();
 
 provider.setCustomParameters({ prompt: "select_account" });
-export const signInWithGoogle = () =>
-  signInWithPopup(auth, provider)
-    .then((result) => {
-      // // This gives you a Google Access Token. You can use it to access the Google API.
-      // const credential = GoogleAuthProvider.credentialFromResult(result);
-      // const token = credential.accessToken;
-      // // The signed-in user info.
-      // const user = result.user;
-      // // ...
-    })
-    .catch((error) => {
-      // // Handle Errors here.
-      // const errorCode = error.code;
-      // const errorMessage = error.message;
-      // // The email of the user's account used.
-      // const email = error.email;
-      // // The AuthCredential type that was used.
-      // const credential = GoogleAuthProvider.credentialFromError(error);
-      // // ...
-    });
+export const signInWithGoogle = () => signInWithPopup(auth, provider);
 export default firebase;
